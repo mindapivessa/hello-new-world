@@ -1,7 +1,14 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+
+const COLORS = [
+  'rgba(0, 0, 255, 1)', 
+  'rgba(0, 255, 0, 1)',
+  'rgba(255, 0, 255, 1)',
+  'rgba(255, 255, 0, 1)',
+];
 
 const greetings = [
   { text: "Hello, (new) world!", lang: "English" },
@@ -22,8 +29,106 @@ const ArrowIcon = () => (
   </svg>
 );
 
+const MovingLines = ({ 
+  isActive = true, 
+  onAnimationStart }: { 
+    isActive?: boolean; 
+    onAnimationStart?: () => void 
+}) => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const animationRef = useRef<number | undefined>(undefined);
+  const linesRef = useRef<{
+    y: number;
+    color: string;
+    x: number;
+    length: number;
+  }[]>([]);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    // Initialize lines
+    if (linesRef.current.length === 0) {
+      const lineSpacing = 20;
+      const numberOfLines = Math.floor(canvas.height / lineSpacing);
+
+      for (let i = 0; i < numberOfLines; i++) {
+        linesRef.current.push({
+          y: i * lineSpacing,
+          color: COLORS[Math.floor(Math.random() * COLORS.length)],
+          x: -canvas.width, // Start from left edge
+          length: 200 + Math.random() * 100 // Varying lengths
+        });
+      }
+    }
+
+    // Call onAnimationStart immediately when component mounts
+    requestAnimationFrame(() => {
+      onAnimationStart?.();
+    });
+
+    const animate = () => {
+      if (!isActive) return;
+      
+      const speed = 50;
+      
+      ctx.fillStyle = '#000000';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      linesRef.current.forEach(line => {
+        ctx.fillStyle = line.color;
+        
+        // Update position
+        line.x += speed;
+        
+        // Draw line
+        ctx.fillRect(line.x, line.y, line.length, 2);
+        
+        // Reset position when off screen
+        if (line.x > canvas.width) {
+          line.x = -line.length;
+          line.color = COLORS[Math.floor(Math.random() * COLORS.length)];
+        }
+      });
+
+      animationRef.current = requestAnimationFrame(animate);
+    };
+
+    animate();
+
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
+  }, [isActive, onAnimationStart]);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className="fixed inset-0 bg-black -z-10"
+    />
+  );
+};
+
 const HelloNewWorld = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(true);
+  const [showText, setShowText] = useState(false);
+
+  const handleAnimationStart = () => {
+    // Reduce the delay before showing text
+    setTimeout(() => {
+      setShowText(true);
+    }, 200); // Reduced from 500ms to 200ms
+  };
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -33,49 +138,60 @@ const HelloNewWorld = () => {
     return () => clearInterval(interval);
   }, []);
 
+  const handleStartBuilding = () => {
+    setIsAnimating(false);
+    // Add your navigation logic here
+  };
+
   return (
     <motion.div 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 1, ease: "easeInOut" }}
-      className="fixed inset-0 flex items-center justify-center bg-gradient-to-r from-rose-500 via-orange-400 to-amber-300 animate-gradient bg-gradient-size"
+      transition={{ duration: 0.1 }}
+      className="fixed inset-0 flex items-center justify-center"
     >
-      <div className="absolute inset-0 backdrop-blur-[100px]" />
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
-        className="relative flex flex-col items-center gap-8"
-      >
-        <div className="h-20 perspective-[1000px] flex items-center justify-center">
-          <AnimatePresence mode="wait">
-            <motion.h1
-              key={currentIndex}
-              className="text-4xl font-bold text-white text-center m-0 w-full drop-shadow-lg"
-              initial={{ rotateX: -90, opacity: 0 }}
-              animate={{ rotateX: 0, opacity: 1 }}
-              exit={{ rotateX: 90, opacity: 0 }}
-              transition={{
-                duration: 0.5,
-                ease: "easeOut",
-              }}
-            >
-              {greetings[currentIndex].text}
-            </motion.h1>
-          </AnimatePresence>
-        </div>
+      <MovingLines isActive={isAnimating} onAnimationStart={handleAnimationStart} />
+      <div className="absolute inset-0 backdrop-blur-[40px]" />
+      {showText && (
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
-          className="flex flex-col items-center gap-2"
+          transition={{ duration: 0.5, ease: "easeOut" }} // Reduced from 0.8 to 0.5
+          className="relative flex flex-col items-center gap-8"
         >
-          <button className="w-10 h-10 rounded-full bg-white/10 border-none cursor-pointer flex items-center justify-center transition-all duration-200 ease-in-out hover:bg-white/20 hover:scale-105 backdrop-blur-sm">
-            <ArrowIcon />
-          </button>
-          <span className="text-white text-base drop-shadow-lg">Start building</span>
+          <div className="h-20 perspective-[1000px] flex items-center justify-center">
+            <AnimatePresence mode="wait">
+              <motion.h1
+                key={currentIndex}
+                className="text-4xl font-bold text-white text-center m-0 w-full drop-shadow-lg"
+                initial={{ rotateX: -90, opacity: 0 }}
+                animate={{ rotateX: 0, opacity: 1 }}
+                exit={{ rotateX: 90, opacity: 0 }}
+                transition={{
+                  duration: 0.5,
+                  ease: "easeOut",
+                }}
+              >
+                {greetings[currentIndex].text}
+              </motion.h1>
+            </AnimatePresence>
+          </div>
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
+            className="flex flex-col items-center gap-2"
+          >
+            <button 
+              onClick={handleStartBuilding}
+              className="w-10 h-10 rounded-full bg-white/10 border-none cursor-pointer flex items-center justify-center transition-all duration-200 ease-in-out hover:bg-white/20 hover:scale-105 backdrop-blur-sm"
+            >
+              <ArrowIcon />
+            </button>
+            <span className="text-white text-base drop-shadow-lg">Start building</span>
+          </motion.div>
         </motion.div>
-      </motion.div>
+      )}
     </motion.div>
   );
 };
