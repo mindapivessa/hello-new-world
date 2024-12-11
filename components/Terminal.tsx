@@ -15,7 +15,7 @@ const Terminal = ({ onMessagesComplete }: TerminalProps) => {
   const messages = [
     'Updating the system...',
     'Preparing your new developer environment...',
-    'Compiling the tools and resources...'
+    'Escaping the walled garden...'
   ];
 
   useEffect(() => {
