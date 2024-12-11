@@ -7,6 +7,14 @@ interface PixelatedBgProps {
   startTransition?: boolean;
 }
 
+interface Pixel {
+  x: number;
+  y: number;
+  vx?: number;
+  vy?: number;
+  opacity?: number;
+}
+
 const PixelatedBg = ({ onTransitionComplete, startTransition = false }: PixelatedBgProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number | undefined>(undefined);
@@ -27,7 +35,7 @@ const PixelatedBg = ({ onTransitionComplete, startTransition = false }: Pixelate
 
     const pixelSize = 4;
     let isTransitioning = false;
-    let pixels: { x: number; y: number }[] = [];
+    let pixels: Pixel[] = [];
 
     const resizeCanvas = () => {
       canvas.width = window.innerWidth;
@@ -39,14 +47,11 @@ const PixelatedBg = ({ onTransitionComplete, startTransition = false }: Pixelate
       const cols = Math.ceil(canvas.width / pixelSize);
       const rows = Math.ceil(canvas.height / pixelSize);
       
-      // Fill with black background
       ctx.fillStyle = '#000000';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Reset pixels array
       pixels = [];
 
-      // Draw static pixelated pattern and collect coordinates
       for (let i = 0; i < cols; i++) {
         for (let j = 0; j < rows; j++) {
           const x = i * pixelSize;
@@ -60,30 +65,48 @@ const PixelatedBg = ({ onTransitionComplete, startTransition = false }: Pixelate
           ctx.fillStyle = color;
           ctx.fillRect(x, y, pixelSize - 1, pixelSize - 1);
           
-          // Store coordinates for transition
-          pixels.push({ x, y });
+          const centerX = canvas.width / 2;
+          const centerY = canvas.height / 2;
+          const angle = Math.atan2(y - centerY, x - centerX);
+          const speed = Math.random() * 2 + 5;
+          
+          pixels.push({ 
+            x, 
+            y,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            opacity: 1
+          });
         }
       }
       
-      // Shuffle pixels array for random fill effect
       pixels = pixels.sort(() => Math.random() - 0.5);
     };
 
     const animateTransition = () => {
       if (!isTransitioning || !ctx || !canvas) return;
 
-      const pixelsPerFrame = 500; // Increased for faster transition
-
-      const currentPixels = pixels.slice(0, pixelsPerFrame);
-      pixels = pixels.slice(pixelsPerFrame);
-
-      // Fill pixels black
       ctx.fillStyle = '#000000';
-      currentPixels.forEach(({ x, y }) => {
-        ctx.fillRect(x, y, pixelSize - 1, pixelSize - 1);
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      let allPixelsFaded = true;
+
+      pixels = pixels.map(pixel => {
+        if (pixel.opacity && pixel.opacity > 0) {
+          allPixelsFaded = false;
+          
+          pixel.x += pixel.vx || 0;
+          pixel.y += pixel.vy || 0;
+          
+          pixel.opacity -= 0.02;
+
+          ctx.fillStyle = `rgba(242, 242, 242, ${pixel.opacity})`;
+          ctx.fillRect(pixel.x, pixel.y, pixelSize - 1, pixelSize - 1);
+        }
+        return pixel;
       });
 
-      if (pixels.length > 0) {
+      if (!allPixelsFaded) {
         animationRef.current = requestAnimationFrame(animateTransition);
       } else {
         isTransitioning = false;
