@@ -43,7 +43,7 @@ export default function CommandMenu({ open, onOpenChange }: CommandMenuProps) {
               className="w-full px-4 h-14 text-base text-white/90 bg-transparent border-b border-white/10 outline-none placeholder:text-white/40"
               placeholder="Search by products, solutions, or templates..."
             />
-            <Command.List className="pt-4 mt-2 max-h-[60vh] overflow-y-auto">
+            <Command.List className="pt-2 max-h-[60vh] overflow-y-auto">
             {/* Quickstart  */}
               <div className="px-3 py-2 text-xs text-white/50">Quickstart</div>
               <Command.Group
