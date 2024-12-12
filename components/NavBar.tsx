@@ -90,6 +90,10 @@ export default function NavBar() {
               className="flex items-center gap-1.5 px-3 py-1 text-sm text-white/50 hover:text-white transition-colors duration-200 rounded-full border border-white/20 hover:border-white/30"
             >
               Docs
+              <span className="space-x-1">
+                <kbd className="px-1.5 py-0.5 rounded bg-white/10 text-xs">⌘</kbd>
+                <kbd className="px-1.5 py-0.5 rounded bg-white/10 text-xs">D</kbd>
+            </span>
             </a>
             <a
               href="https://blog.base.dev"
@@ -114,9 +118,11 @@ export default function NavBar() {
             onClick={handleCommandClick}
             className="px-3 py-1 text-sm text-[#0052FF] hover:text-[#0052FF] transition-colors duration-200 rounded-full border border-[#0052FF] hover:text-blue-500"
           >
-            <span className="font-medium pr-2">Start here</span>
-            <span className="font-mono pr-1">⌘</span>
-            <span className="font-mono">B</span>
+            <span className="font-medium pr-2">Get started</span>
+            <span className="space-x-1">
+                <kbd className="px-1.5 py-0.5 rounded bg-white/10 text-xs">⌘</kbd>
+                <kbd className="px-1.5 py-0.5 rounded bg-white/10 text-xs">B</kbd>
+            </span>
           </button>
 
           {/* Avatar */}
