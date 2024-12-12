@@ -7,8 +7,8 @@ import CommandMenu from './CommandMenu';
 
 const tabs = [
   { id: 'home', label: 'Home' },
-  { id: 'tools', label: 'Tools' },
-  { id: 'incentives', label: 'Incentives' },
+  { id: 'products', label: 'Products' },
+  { id: 'solutions', label: 'Solution' },
   { id: 'resources', label: 'Resources' },
   { id: 'stories', label: 'Stories' },
 ];
