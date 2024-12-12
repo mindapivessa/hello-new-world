@@ -68,15 +68,25 @@ export default function Home() {
   return (
     <div className="w-screen h-[200vh] relative">
       {/* Background layers */}
-      <div className="fixed inset-0 z-0">
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+        className="fixed inset-0 z-0"
+      >
         <AnimatedBlobs />
-      </div>
+      </motion.div>
       <div className="fixed inset-0 backdrop-blur-[40px] z-10 h-[200vh]" />
       
-      {/* Sticky Nav - Moved outside other containers */}
-      <div className="sticky top-0 z-30">
+      {/* Sticky Nav */}
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5, delay: 0.5 }}
+        className="sticky top-0 z-30"
+      >
         <NavBar />
-      </div>
+      </motion.div>
       
       {/* Content layers */}
       <div className="relative z-20">
@@ -86,6 +96,9 @@ export default function Home() {
             opacity: heroOpacity,
             y: heroY
           }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 1 }}
           className="fixed top-10 left-0 w-full h-[calc(100vh-2.5rem)]"
         >
           <div className="flex-1 flex flex-col justify-between pt-36 pb-12 h-full">
@@ -153,6 +166,14 @@ export default function Home() {
             <LowFee />
             <Interoperable />
           </div>
+          <motion.h2 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="text-2xl p-8 font-bold text-white/90 tracking-tighter text-center"
+            >
+            Launch, scale, and monetize
+        </motion.h2>
         </motion.div>
       </div>
     </div>

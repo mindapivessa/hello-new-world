@@ -43,7 +43,7 @@ export default function InstantSettlement() {
         className="w-full p-8 pb-12 rounded-lg flex flex-col items-center justify-center"
       >
         {/* Trade Card */}
-        <div className="bg-white/5 rounded-xl overflow-hidden w-72">
+        <div className="bg-white/5 rounded-xl overflow-hidden w-72 gap-2">
           {/* EURC Amount */}
           <div className="p-4 flex items-center justify-between">
             <div className="w-10 h-10 bg-white/10 rounded-full" />
