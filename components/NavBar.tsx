@@ -23,6 +23,12 @@ export default function NavBar() {
     setIsCommandMenuOpen(open);
   };
 
+  // Dispatch custom event when tab changes
+  const handleTabClick = (tabId: string) => {
+    setActiveTab(tabId);
+    window.dispatchEvent(new CustomEvent('viewChange', { detail: tabId }));
+  };
+
   return (
     <>
       <div className="w-full h-10 flex justify-between px-4 border-b border-white/10">
@@ -49,13 +55,13 @@ export default function NavBar() {
             {tabs.map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
+                onClick={() => handleTabClick(tab.id)}
                 className={`
                   px-4 h-full w-36 text-sm font-medium
                   transition-all duration-200
                   relative flex items-center justify-center
                   text-white
-                  hover:bg-neutral-900
+                  hover:bg-white/10
                   ${activeTab === tab.id ? 'opacity-100' : 'opacity-50 hover:opacity-100'}
                   after:absolute after:bottom-0 after:left-0 after:right-0 
                   after:h-[2px] after:transition-all after:duration-200

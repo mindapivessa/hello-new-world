@@ -122,6 +122,7 @@ const HelloNewWorld = ({ onStartBuilding }: { onStartBuilding: () => void }) => 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(true);
   const [showText, setShowText] = useState(false);
+  const [isExiting, setIsExiting] = useState(false);
 
   const handleAnimationStart = () => {
     // Reduce the delay before showing text
@@ -139,24 +140,32 @@ const HelloNewWorld = ({ onStartBuilding }: { onStartBuilding: () => void }) => 
   }, []);
 
   const handleStartBuilding = () => {
-    setIsAnimating(false);
-    onStartBuilding();
+    // First, set exiting state to trigger text fade out
+    setIsExiting(true);
+    
+    // After text fades out, handle the background transition
+    setTimeout(() => {
+      setIsAnimating(false);
+      // Delay the final transition callback
+      setTimeout(onStartBuilding, 1000);
+    }, 500);
   };
 
   return (
     <motion.div 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 1, delay: 0.5 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 1 }}
       className="fixed inset-0 flex items-center justify-center"
     >
       <MovingLines isActive={isAnimating} onAnimationStart={handleAnimationStart} />
-      <div className="absolute inset-0 backdrop-blur-[40px]" />
+      <div className={`absolute inset-0 backdrop-blur-[40px] transition-opacity duration-1000 ${!isAnimating ? 'opacity-0' : 'opacity-100'}`} />
       {showText && (
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: "easeOut" }} // Reduced from 0.8 to 0.5
+          animate={{ opacity: isExiting ? 0 : 1, y: isExiting ? -20 : 0 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
           className="relative flex flex-col items-center gap-8"
         >
           <div className="h-20 perspective-[1000px] flex items-center justify-center">
