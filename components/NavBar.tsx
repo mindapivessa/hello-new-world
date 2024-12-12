@@ -116,7 +116,7 @@ export default function NavBar() {
           >
             <span className="font-medium pr-2">Start here</span>
             <span className="font-mono pr-1">⌘</span>
-            <span className="font-mono">K</span>
+            <span className="font-mono">B</span>
           </button>
 
           {/* Avatar */}
