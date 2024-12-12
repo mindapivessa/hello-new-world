@@ -15,9 +15,9 @@ export default function Home({ isInitialEntry }: HomeProps) {
   const [isCommandMenuOpen, setIsCommandMenuOpen] = useState(false);
   
   const initialAnimation = isInitialEntry ? { opacity: 0 } : { opacity: 1 };
-  const entryTransition = isInitialEntry ? { duration: 1 } : { duration: 0 };
-  const navTransition = isInitialEntry ? { duration: 0.5, delay: 0.5 } : { duration: 0 };
-  const contentTransition = isInitialEntry ? { duration: 0.5, delay: 1 } : { duration: 0 };
+  const entryTransition = isInitialEntry ? { duration: 0.5 } : { duration: 0 };
+  const navTransition = isInitialEntry ? { duration: 0.5, delay: 0.2 } : { duration: 0 };
+  const contentTransition = isInitialEntry ? { duration: 0.5, delay: 0.4 } : { duration: 0 };
 
   return (
     <div className="w-screen h-screen relative">
