@@ -13,7 +13,9 @@
     "framer-motion": "^11.13.5",
     "next": "15.0.4",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "sonner": "^1.7.1",
+    "use-scramble": "^2.2.15"
   },
   "devDependencies": {
     "@types/node": "^20",

@@ -1,81 +1,38 @@
 'use client';
 
-import { motion, useScroll, useTransform, easeInOut } from 'framer-motion';
+import { motion } from 'framer-motion';
 import NavBar from './NavBar';
 import AnimatedBlobs from './AnimatedBlobs';
-import InstantSettlement from './InstantSettlement';
-import LowFee from './LowFee';
-import Interoperable from './Interoperable';
-
-const ChevronDown = () => (
-  <svg 
-    width="20" 
-    height="20" 
-    viewBox="0 0 24 24" 
-    fill="none" 
-    xmlns="http://www.w3.org/2000/svg"
-    className="text-white/30"
-  >
-    <path 
-      d="M6 9L12 15L18 9" 
-      stroke="currentColor" 
-      strokeWidth="2" 
-      strokeLinecap="round" 
-      strokeLinejoin="round"
-    />
-  </svg>
-);
+import { useState } from 'react';
+import CommandMenu from './CommandMenu';
+import { Toaster, toast } from 'sonner'
 
 interface HomeProps {
   isInitialEntry: boolean;
 }
 
 export default function Home({ isInitialEntry }: HomeProps) {
-  const { scrollYProgress } = useScroll();
+  const [isCommandMenuOpen, setIsCommandMenuOpen] = useState(false);
   
-  const heroOpacity = useTransform(
-    scrollYProgress,
-    [0, 0.2, 0.4],
-    [1, 0.5, 0],
-    {
-      ease: easeInOut
-    }
-  );
-
-  const heroY = useTransform(
-    scrollYProgress,
-    [0, 0.4],
-    [0, -50],
-    {
-      ease: easeInOut
-    }
-  );
-
-  const demoY = useTransform(
-    scrollYProgress,
-    [0, 0.4],
-    ['100vh', '0vh'],
-    {
-      ease: easeInOut
-    }
-  );
-
-  const demoOpacity = useTransform(
-    scrollYProgress,
-    [0.2, 0.4],
-    [0, 1],
-    {
-      ease: easeInOut
-    }
-  );
-
   const initialAnimation = isInitialEntry ? { opacity: 0 } : { opacity: 1 };
   const entryTransition = isInitialEntry ? { duration: 1 } : { duration: 0 };
   const navTransition = isInitialEntry ? { duration: 0.5, delay: 0.5 } : { duration: 0 };
   const contentTransition = isInitialEntry ? { duration: 0.5, delay: 1 } : { duration: 0 };
 
   return (
-    <div className="w-screen h-[200vh] relative">
+    <div className="w-screen h-screen relative">
+        <Toaster
+        position="bottom-center"
+        toastOptions={{
+          unstyled: true,
+          classNames: {
+            toast: 'bg-[#0f0f0f] text-white border border-neutral-800 text-sm py-3',
+          },
+        }}
+      />
+      {/* CommandMenu component */}
+      <CommandMenu open={isCommandMenuOpen} onOpenChange={setIsCommandMenuOpen} />
+      
       {/* Background layers */}
       <motion.div 
         initial={initialAnimation}
@@ -85,7 +42,7 @@ export default function Home({ isInitialEntry }: HomeProps) {
       >
         <AnimatedBlobs />
       </motion.div>
-      <div className="fixed inset-0 backdrop-blur-[40px] z-10 h-[200vh]" />
+      <div className="fixed inset-0 backdrop-blur-[40px] z-10 h-screen" />
       
       {/* Sticky Nav */}
       <motion.div 
@@ -99,16 +56,11 @@ export default function Home({ isInitialEntry }: HomeProps) {
       
       {/* Content layers */}
       <div className="relative z-20">
-        {/* Hero Section - Fixed */}
         <motion.div 
-          style={{
-            opacity: heroOpacity,
-            y: heroY
-          }}
           initial={initialAnimation}
           animate={{ opacity: 1 }}
           transition={contentTransition}
-          className="fixed top-10 left-0 w-full h-[calc(100vh-2.5rem)]"
+          className="w-full h-[calc(100vh-2.5rem)]"
         >
           <div className="flex-1 flex flex-col justify-between pt-36 pb-12 h-full">
             {/* Hero Content */}
@@ -129,60 +81,108 @@ export default function Home({ isInitialEntry }: HomeProps) {
               >
                 Your developer platform for launching, scaling, and monetizing your app onchain.
               </motion.h3>
-            </div>
 
-            {/* Why build onchain + Scroll Indicator */}
-            <div className="flex flex-col items-center gap-4 max-w-xl px-4 text-center mx-auto">
-              <motion.p 
+              {/* Search Bar */}
+              <motion.div 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-                className="text-base text-white/90"
-              >
-                Why build an app onchain, you may wonder?
-              </motion.p>
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
-                className="flex flex-col items-center gap-0.5"
+                className="w-full max-w-md mt-8"
               >
-                <ChevronDown />
-                <span className="text-xs text-white/30">Continue scrolling</span>
+                <button
+                  onClick={() => setIsCommandMenuOpen(true)}
+                  className="w-full flex items-center gap-2 px-4 py-3 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-white/60 text-sm transition-colors"
+                >
+                  <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg" className="opacity-70">
+                    <path d="M10 6.5C10 8.433 8.433 10 6.5 10C4.567 10 3 8.433 3 6.5C3 4.567 4.567 3 6.5 3C8.433 3 10 4.567 10 6.5ZM9.30884 10.0159C8.53901 10.6318 7.56251 11 6.5 11C4.01472 11 2 8.98528 2 6.5C2 4.01472 4.01472 2 6.5 2C8.98528 2 11 4.01472 11 6.5C11 7.56251 10.6318 8.53901 10.0159 9.30884L12.8536 12.1464C13.0488 12.3417 13.0488 12.6583 12.8536 12.8536C12.6583 13.0488 12.3417 13.0488 12.1464 12.8536L9.30884 10.0159Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path>
+                  </svg>
+                  What do you want to build?
+                  <div className="ml-auto flex items-center gap-1 text-xs text-white/40">
+                    <kbd className="px-1.5 py-0.5 rounded bg-white/10">⌘</kbd>
+                    <kbd className="px-1.5 py-0.5 rounded bg-white/10">B</kbd>
+                  </div>
+                </button>
+              </motion.div>
+
+              {/* Quick Access Prompts */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                className="flex flex-wrap justify-center gap-1 mt-2 text-sm"
+              >
+                <button
+              className="flex items-center space-x-2 py-1 px-3 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-white/60 text-sm transition-colors"
+              onClick={() => {
+                navigator.clipboard.writeText('npm create onchain')
+                toast('Copied to clipboard')
+              }}
+            >
+              <span className="text-white">npm create onchain</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="h-3 w-3"
+              >
+                <rect width="8" height="4" x="8" y="2" rx="1" ry="1" />
+                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+              </svg>
+            </button>
+                <button 
+              className="flex items-center space-x-2 py-1 px-3 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-white/60 text-sm transition-colors"
+              onClick={() => window.open('https://github.com/coinbase/onchain-agent-demo', '_blank')}
+            >
+              <span className="text-white">Launch your Agent</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="h-4 w-4"
+              >
+                <path d="M7 17L17 7" />
+                <path d="M7 7h10v10" />
+              </svg>
+            </button>
+
+             {/* L3 */}
+             {/* TODO: Replace this with CDP L3 link */}
+             <button 
+              className="flex items-center space-x-2 py-1 px-3 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-white/60 text-sm transition-colors"
+              onClick={() => window.open('https://github.com/coinbase/onchain-agent-demo', '_blank')}
+            >
+              <span className="text-white">Launch your L3</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="h-4 w-4"
+              >
+                <path d="M7 17L17 7" />
+                <path d="M7 7h10v10" />
+              </svg>
+            </button>
               </motion.div>
             </div>
           </div>
-        </motion.div>
-
-        {/* Why build onchain*/}
-        <motion.div 
-          style={{ 
-            y: demoY,
-            opacity: demoOpacity
-          }}
-          className="fixed top-10 left-0 w-full"
-        >
-        <motion.h2 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-2xl p-8 font-bold text-white/90 tracking-tighter text-center"
-            >
-            Why build onchain?
-        </motion.h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 border-y border-white/10">
-            <InstantSettlement />
-            <LowFee />
-            <Interoperable />
-          </div>
-          <motion.h2 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-2xl p-8 font-bold text-white/90 tracking-tighter text-center"
-            >
-            Launch, scale, and monetize
-        </motion.h2>
         </motion.div>
       </div>
     </div>

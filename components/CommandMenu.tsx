@@ -11,7 +11,7 @@ interface CommandMenuProps {
 
 export default function CommandMenu({ open, onOpenChange }: CommandMenuProps) {
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
-    if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
+    if (e.key === 'b' && (e.metaKey || e.ctrlKey)) {
       e.preventDefault();
       onOpenChange(!open);
     }
@@ -23,59 +23,92 @@ export default function CommandMenu({ open, onOpenChange }: CommandMenuProps) {
   }, [handleKeyDown]);
 
   return (
-    <Command.Dialog
-      open={open}
-      onOpenChange={onOpenChange}
-      label="Global Command Menu"
-      className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 max-w-[640px] w-full bg-black/95 rounded-lg border border-white/20 backdrop-blur-sm"
-    >
-      <Dialog.Title className="sr-only">Command Menu</Dialog.Title>
-      <div className="flex flex-col">
-        <Command.Input 
-          className="w-full px-4 py-3 text-white bg-transparent border-b border-white/20 outline-none placeholder:text-white/50"
-          placeholder="Type a command or search..."
-        />
-        <Command.List className="max-h-[300px] overflow-y-auto p-2">
-          <Command.Empty className="p-2 text-sm text-white/50">
-            No results found.
-          </Command.Empty>
+    <Dialog.Root open={open} onOpenChange={onOpenChange}>
+      <Dialog.Portal>
+        {/* Overlay */}
+        <Dialog.Overlay className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50" />
+        
+        {/* Content */}
+        <Dialog.Content className="fixed top-[20%] left-1/2 -translate-x-1/2 max-w-[640px] w-full bg-[#1C1C1E] rounded-xl border border-white/10 shadow-2xl z-[60]">
+          <Dialog.Title className="sr-only">Command Menu</Dialog.Title>
+          
+          <Command>
+            <Command.Input 
+              className="w-full px-4 h-14 text-base text-white/90 bg-transparent border-b border-white/10 outline-none placeholder:text-white/40"
+              placeholder="Search for apps and commands..."
+            />
+            <Command.List className="py-2 max-h-[60vh] overflow-y-auto">
+              <div className="px-3 py-2 text-xs text-white/50">Suggestions</div>
+              
+              {/* Applications */}
+              <Command.Group>
+                {[
+                  { name: 'Linear', icon: '🔵' },
+                  { name: 'Figma', icon: '🎨' },
+                  { name: 'Slack', icon: '💬' },
+                  { name: 'YouTube', icon: '🎥' },
+                  { name: 'Raycast', icon: '⚡' },
+                ].map((app) => (
+                  <Command.Item 
+                    key={app.name}
+                    className="px-3 py-2 mx-2 flex items-center justify-between rounded-md hover:bg-white/10 cursor-pointer"
+                    onSelect={() => {
+                      console.log(`Selected ${app.name}`);
+                      onOpenChange(false);
+                    }}
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg">{app.icon}</span>
+                      <span className="text-white/90">{app.name}</span>
+                    </div>
+                    <span className="text-sm text-white/40">Application</span>
+                  </Command.Item>
+                ))}
+              </Command.Group>
 
-          <Command.Group heading="Navigation" className="p-2">
-            <Command.Item 
-              className="p-2 text-sm text-white rounded hover:bg-white/10 cursor-pointer"
-              onSelect={() => {
-                window.location.href = '/';
-                onOpenChange(false);
-              }}
-            >
-              Go to Home
-            </Command.Item>
-            <Command.Item 
-              className="p-2 text-sm text-white rounded hover:bg-white/10 cursor-pointer"
-              onSelect={() => {
-                window.location.href = '/here';
-                onOpenChange(false);
-              }}
-            >
-              Go to Here
-            </Command.Item>
-          </Command.Group>
+              <div className="px-3 py-2 mt-2 text-xs text-white/50">Commands</div>
+              
+              {/* Commands */}
+              <Command.Group>
+                {[
+                  { name: 'Clipboard History', icon: '📋' },
+                  { name: 'Import Extension', icon: '🔌' },
+                ].map((command) => (
+                  <Command.Item 
+                    key={command.name}
+                    className="px-3 py-2 mx-2 flex items-center justify-between rounded-md hover:bg-white/10 cursor-pointer"
+                    onSelect={() => {
+                      console.log(`Executed ${command.name}`);
+                      onOpenChange(false);
+                    }}
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg">{command.icon}</span>
+                      <span className="text-white/90">{command.name}</span>
+                    </div>
+                    <span className="text-sm text-white/40">Command</span>
+                  </Command.Item>
+                ))}
+              </Command.Group>
 
-          <Command.Separator className="h-px bg-white/20 my-2" />
-
-          <Command.Group heading="Theme" className="p-2">
-            <Command.Item 
-              className="p-2 text-sm text-white rounded hover:bg-white/10 cursor-pointer"
-              onSelect={() => {
-                // Add theme toggle logic here
-                onOpenChange(false);
-              }}
-            >
-              Toggle theme
-            </Command.Item>
-          </Command.Group>
-        </Command.List>
-      </div>
-    </Command.Dialog>
+              {/* Footer */}
+              <div className="mt-4 px-3 py-3 border-t border-white/10 flex items-center justify-between text-sm text-white/40">
+                <div>Open Application</div>
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-1">
+                    <kbd className="px-1.5 py-0.5 rounded bg-white/10">↵</kbd>
+                    <span>Actions</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <kbd className="px-1.5 py-0.5 rounded bg-white/10">⌘</kbd>
+                    <kbd className="px-1.5 py-0.5 rounded bg-white/10">B</kbd>
+                  </div>
+                </div>
+              </div>
+            </Command.List>
+          </Command>
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
   );
 } 
