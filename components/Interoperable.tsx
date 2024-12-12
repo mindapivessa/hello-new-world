@@ -34,7 +34,7 @@ export default function Interoperable() {
   };
 
   return (
-    <div className="flex flex-col max-w-xl p-6 border-r border-white/10">
+    <div className="flex flex-col max-w-xl p-6">
       {/* Interactive Trade Demo */}
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
