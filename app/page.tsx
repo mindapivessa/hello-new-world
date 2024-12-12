@@ -12,6 +12,7 @@ export default function Page() {
   const [showHome, setShowHome] = useState(false);
   const [startBgTransition, setStartBgTransition] = useState(false);
   const [activeView, setActiveView] = useState('home');
+  const [isInitialEntry, setIsInitialEntry] = useState(true);
 
   const handleMessagesComplete = useCallback(() => {
     setShowHelloWorld(true);
@@ -21,6 +22,7 @@ export default function Page() {
   useEffect(() => {
     const handleViewChange = (event: CustomEvent) => {
       setActiveView(event.detail);
+      setIsInitialEntry(false);
     };
 
     window.addEventListener('viewChange', handleViewChange as EventListener);
@@ -37,7 +39,7 @@ export default function Page() {
           startTransition={startBgTransition}
         />
         {showHelloWorld && !showHome && <HelloNewWorld onStartBuilding={() => setShowHome(true)} />}
-        {showHome && activeView === 'home' && <Home />}
+        {showHome && activeView === 'home' && <Home isInitialEntry={isInitialEntry} />}
         {showHome && activeView === 'tools' && <Tools />}
         {!startBgTransition && <Terminal onMessagesComplete={handleMessagesComplete} />}
       </>

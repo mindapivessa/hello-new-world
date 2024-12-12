@@ -26,7 +26,11 @@ const ChevronDown = () => (
   </svg>
 );
 
-export default function Home() {
+interface HomeProps {
+  isInitialEntry: boolean;
+}
+
+export default function Home({ isInitialEntry }: HomeProps) {
   const { scrollYProgress } = useScroll();
   
   const heroOpacity = useTransform(
@@ -65,13 +69,18 @@ export default function Home() {
     }
   );
 
+  const initialAnimation = isInitialEntry ? { opacity: 0 } : { opacity: 1 };
+  const entryTransition = isInitialEntry ? { duration: 1 } : { duration: 0 };
+  const navTransition = isInitialEntry ? { duration: 0.5, delay: 0.5 } : { duration: 0 };
+  const contentTransition = isInitialEntry ? { duration: 0.5, delay: 1 } : { duration: 0 };
+
   return (
     <div className="w-screen h-[200vh] relative">
       {/* Background layers */}
       <motion.div 
-        initial={{ opacity: 0 }}
+        initial={initialAnimation}
         animate={{ opacity: 1 }}
-        transition={{ duration: 1 }}
+        transition={entryTransition}
         className="fixed inset-0 z-0"
       >
         <AnimatedBlobs />
@@ -80,9 +89,9 @@ export default function Home() {
       
       {/* Sticky Nav */}
       <motion.div 
-        initial={{ opacity: 0 }}
+        initial={initialAnimation}
         animate={{ opacity: 1 }}
-        transition={{ duration: 0.5, delay: 0.5 }}
+        transition={navTransition}
         className="sticky top-0 z-30"
       >
         <NavBar />
@@ -96,9 +105,9 @@ export default function Home() {
             opacity: heroOpacity,
             y: heroY
           }}
-          initial={{ opacity: 0 }}
+          initial={initialAnimation}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 1 }}
+          transition={contentTransition}
           className="fixed top-10 left-0 w-full h-[calc(100vh-2.5rem)]"
         >
           <div className="flex-1 flex flex-col justify-between pt-36 pb-12 h-full">
