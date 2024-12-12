@@ -118,7 +118,7 @@ const MovingLines = ({
   );
 };
 
-const HelloNewWorld = () => {
+const HelloNewWorld = ({ onStartBuilding }: { onStartBuilding: () => void }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(true);
   const [showText, setShowText] = useState(false);
@@ -140,7 +140,7 @@ const HelloNewWorld = () => {
 
   const handleStartBuilding = () => {
     setIsAnimating(false);
-    // Add your navigation logic here
+    onStartBuilding();
   };
 
   return (
