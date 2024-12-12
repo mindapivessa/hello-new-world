@@ -8,6 +8,8 @@ import CommandMenu from './CommandMenu';
 const tabs = [
   { id: 'home', label: 'Home' },
   { id: 'tools', label: 'Tools' },
+  { id: 'incentives', label: 'Incentives' },
+  { id: 'resources', label: 'Resources' },
   { id: 'stories', label: 'Stories' },
 ];
 
@@ -82,12 +84,12 @@ export default function NavBar() {
           {/* External Links */}
           <div className="flex items-center gap-2">
             <a
-              href="https://docs.base.dev"
+              href="https://blog.base.dev"
               target="_blank"
               rel="noopener noreferrer"
-              className="px-3 py-1 text-sm text-[#0052FF] hover:text-[#0052FF] transition-colors duration-200 rounded-full border border-[#0052FF] hover:text-blue-500"
+              className="flex items-center gap-1.5 px-3 py-1 text-sm text-white/50 hover:text-white transition-colors duration-200 rounded-full border border-white/20 hover:border-white/30"
             >
-              Get started
+              Docs
             </a>
             <a
               href="https://blog.base.dev"
@@ -97,15 +99,24 @@ export default function NavBar() {
             >
               Blog
             </a>
+            <a
+              href="https://blog.base.dev"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 px-3 py-1 text-sm text-white/50 hover:text-white transition-colors duration-200 rounded-full border border-white/20 hover:border-white/30"
+            >
+              Get help
+            </a>
           </div>
 
           {/* Command + K Button */}
           <button 
             onClick={handleCommandClick}
-            className="flex items-center gap-1.5 px-3 py-1 text-sm text-white/50 hover:text-white transition-colors duration-200 rounded-full border border-white/20 hover:border-white/30"
+            className="px-3 py-1 text-sm text-[#0052FF] hover:text-[#0052FF] transition-colors duration-200 rounded-full border border-[#0052FF] hover:text-blue-500"
           >
-            <span className="font-medium">⌘</span>
-            <span>K</span>
+            <span className="font-medium pr-2">Start here</span>
+            <span className="font-mono pr-1">⌘</span>
+            <span className="font-mono">K</span>
           </button>
 
           {/* Avatar */}
