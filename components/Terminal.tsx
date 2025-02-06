@@ -13,16 +13,16 @@ const Terminal = ({ onMessagesComplete }: TerminalProps) => {
   const [isLastMessageComplete, setIsLastMessageComplete] = useState(false);
 
   const messages = [
+    'Preparing for the new era...',
     'Updating the system...',
-    'Preparing your new developer environment...',
-    'Escaping the walled garden...'
+    'Loading...'
   ];
 
   useEffect(() => {
     if (showMessages && messageIndex < messages.length) {
       const timer = setTimeout(() => {
         setMessageIndex(prev => prev + 1);
-      }, 1000);
+      }, 1500);
       return () => clearTimeout(timer);
     } else if (showMessages && messageIndex === messages.length) {
       const completeTimer = setTimeout(() => {
@@ -70,9 +70,7 @@ const Terminal = ({ onMessagesComplete }: TerminalProps) => {
           <span className="w-3 h-3 rounded-full bg-[#ffbd2e]"></span>
           <span className="w-3 h-3 rounded-full bg-[#27c93f]"></span>
         </div>
-        <div className="absolute left-1/2 -translate-x-1/2 text-neutral-500 text-sm">
-          Base.dev
-        </div>
+        
       </div>
       <div className="p-5 text-neutral-100 font-mono text-sm leading-relaxed">
         {!showMessages && (
